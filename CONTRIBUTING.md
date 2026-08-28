@@ -2,138 +2,49 @@
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -->
 
-# Development
+# Contributing
 
-## Configure and Build the Project Using CMake Presets
+## Build with CMake Presets
 
-The simplest way of configuring and building the project is to use [CMake
-Presets](https://cmake.org/cmake/help/latest/manual/cmake-presets.7.html). Appropriate
-presets for major compilers have been included by default.  You can use `cmake
---list-presets=workflow` to see all available presets.
+The easiest way to configure, build, and test the project is with workflow presets:
 
-Here is an example of invoking the `gcc-debug` preset:
-
-```shell
+```bash
 cmake --workflow --preset gcc-debug
 ```
 
-Generally, there are two kinds of presets, `debug` and `release`.
+Use `cmake --list-presets=workflow` to see all available presets.
 
-The `debug` presets are designed to aid development, so they have debuginfo and sanitizers
-enabled.
+Debug presets enable sanitizers where supported. Release presets use optimized builds.
 
-> [!NOTE]
->
-> The sanitizers that are enabled vary from compiler to compiler.  See the toolchain files
-> under ([`infra/cmake`](infra/cmake/)) to determine the exact configuration used for each
-> preset.
-
-The `release` presets are designed for production use, and
-consequently have the highest optimization turned on (e.g. `O3`).
-
-## Configure and Build Manually
-
-If the presets are not suitable for your use case, a traditional CMake invocation will
-provide more configurability.
-
-To configure, build and test the project manually, you can run this set of commands. Note
-that this requires GoogleTest to be installed.
+## Manual Build
 
 ```bash
-cmake \
-  -B build \
-  -S . \
+cmake -B build -S . \
   -DCMAKE_CXX_STANDARD=20 \
-  # Your extra arguments here.
-cmake --build build
-ctest --test-dir build
-```
-
-> [!IMPORTANT]
->
-> Beman projects are [passive projects](
-> https://github.com/bemanproject/beman/blob/main/docs/beman_standard.md#cmakepassive_projects),
-> so you need to specify the C++ version via `CMAKE_CXX_STANDARD` when manually
-> configuring the project.
-
-## Dependency Management
-
-### vcpkg
-
-The best way to install the project's dependencies is to use the vcpkg workflow.
-
-To do so, make sure vcpkg is installed and `VCPKG_ROOT` is defined in your environment,
-then specify
-`-DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"`. Vcpkg will handle
-the project's dependencies, including GoogleTest.
-
-Example commands:
-
-```shell
-cmake \
-  -B build \
-  -S . \
-  -DCMAKE_CXX_STANDARD=17 \
   -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 cmake --build build
 ctest --test-dir build
 ```
 
-The file `./vcpkg.json` configures the list of dependencies that will be configured by
-vcpkg.
+## Dependencies
 
-### FetchContent
+GoogleTest is provided exclusively through vcpkg (`vcpkg.json`) when `CPPTEMPLATE_BUILD_TESTS` is enabled. Set `VCPKG_ROOT` and use the vcpkg toolchain file when configuring.
 
-Instead of installing the project's dependencies via a package manager, you can optionally
-configure beman.CppTemplate to fetch them automatically via CMake FetchContent.
+## Project Options
 
-To do so, specify
-`-DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./infra/cmake/use-fetch-content.cmake`. This will
-bring in GoogleTest automatically along with any other dependency the project may require.
+| Option | Default | Description |
+|--------|---------|-------------|
+| `CPPTEMPLATE_BUILD_TESTS` | `ON` when top-level | Build unit tests |
+| `CPPTEMPLATE_BUILD_EXAMPLES` | `ON` when top-level | Build example programs |
 
-Example commands:
+## Code Style
 
-```shell
-cmake \
-  -B build \
-  -S . \
-  -DCMAKE_CXX_STANDARD=20 \
-  -DCMAKE_PROJECT_TOP_LEVEL_INCLUDES=./infra/cmake/use-fetch-content.cmake
-cmake --build build
-ctest --test-dir build
-```
-
-The file `./lockfile.json` configures the list of dependencies and versions that will be
-acquired by FetchContent.
-
-## Project-specific configure arguments
-
-Project-specific options are prefixed with `BEMAN_CPPTEMPLATE`.
-You can see the list of available options with:
+Install and run pre-commit hooks before submitting changes:
 
 ```bash
-cmake -LH -S . -B build | grep "BEMAN_CPPTEMPLATE" -C 2
+pip install pre-commit
+pre-commit install
+pre-commit run --all-files
 ```
 
-<details>
-
-<summary>Some project-specific configure arguments</summary>
-
-### `BEMAN_CPPTEMPLATE_BUILD_TESTS`
-
-Enable building tests and test infrastructure. Default: `ON`.
-Values: `{ ON, OFF }`.
-
-### `BEMAN_CPPTEMPLATE_BUILD_EXAMPLES`
-
-Enable building examples. Default: `ON`. Values: `{ ON, OFF }`.
-
-### `BEMAN_CPPTEMPLATE_INSTALL_CONFIG_FILE_PACKAGE`
-
-Enable installing the CMake config file package. Default: `ON`.
-Values: `{ ON, OFF }`.
-
-This is required so that users of `beman.CppTemplate` can use
-`find_package(beman.CppTemplate)` to locate the library.
-
-</details>
+The repository uses clang-format for C++ and gersemi for CMake files.

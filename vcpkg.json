@@ -1,10 +1,7 @@
 {
-  "name": "beman-CppTemplate",
-  "version-semver": "0.1.0",
+  "name": "cpptemplate",
+  "version": "0.1.0",
   "dependencies": [
-    {
-      "name": "gtest",
-      "host": true
-    }
+      "gtest"
   ]
 }

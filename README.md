@@ -1,154 +1,101 @@
-# beman.CppTemplate: Generic Cpp Template
+# CppTemplate
 
 <!--
 SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 -->
 
-<!-- markdownlint-disable line-length -->
-[![Library Status](https://raw.githubusercontent.com/bemanproject/beman/refs/heads/main/images/badges/beman_badge-beman_library_under_development.svg)](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#the-beman-library-maturity-model)
-[![Continuous Integration Tests](https://github.com/bemanproject/CppTemplate/actions/workflows/ci_tests.yml/badge.svg)](https://github.com/bemanproject/CppTemplate/actions/workflows/ci_tests.yml)
-[![Lint Check (pre-commit)](https://github.com/bemanproject/CppTemplate/actions/workflows/pre-commit-check.yml/badge.svg)](https://github.com/bemanproject/CppTemplate/actions/workflows/pre-commit-check.yml)
-[![Coverage](https://coveralls.io/repos/github/bemanproject/CppTemplate/badge.svg?branch=main)](https://coveralls.io/github/bemanproject/CppTemplate?branch=main)
-![Standard Target](https://github.com/bemanproject/beman/blob/main/images/badges/cpp29.svg)
+[![Continuous Integration](https://github.com/kevinzhao/CppTemplate/actions/workflows/ci.yml/badge.svg)](https://github.com/kevinzhao/CppTemplate/actions/workflows/ci.yml)
+[![Lint Check (pre-commit)](https://github.com/kevinzhao/CppTemplate/actions/workflows/pre-commit-check.yml/badge.svg)](https://github.com/kevinzhao/CppTemplate/actions/workflows/pre-commit-check.yml)
 
-<!-- markdownlint-restore -->
+A generic C++ project template with CMake presets, GoogleTest, examples, and GitHub Actions CI.
 
-`beman.CppTemplate` is (... TODO: description).
+## Features
 
-**Implements**: `std::todo` proposed in [TODO (PnnnnRr)](https://wg21.link/PnnnnRr).
+- Header-only library layout under `include/cpptemplate/`
+- CMake presets for GCC, Clang, Apple Clang, and MSVC
+- Optional examples and unit tests
+- vcpkg manifest for GoogleTest (required for tests)
+- pre-commit hooks for formatting and linting
 
-**Status**: [Under development and not yet ready for production use.](https://github.com/bemanproject/beman/blob/main/docs/beman_library_maturity_model.md#under-development-and-not-yet-ready-for-production-use)
+## Quick Start
 
-## License
+### Prerequisites
 
-`beman.CppTemplate` is licensed under the Apache License v2.0 with LLVM Exceptions.
+- C++20 compiler
+- CMake 3.20 or later
+- Ninja (recommended)
+- vcpkg (required for tests)
 
-## Usage
+Set `VCPKG_ROOT` to your vcpkg installation before configuring.
 
-TODO
-
-Full runnable examples can be found in [`examples/`](examples/).
-
-## Dependencies
-
-### Build Environment
-
-This project requires at least the following to build:
-
-* A C++ compiler that conforms to the C++20 standard or greater
-* CMake 3.30 or later
-* (Test Only) GoogleTest
-
-You can disable building tests by setting CMake option `BEMAN_CPPTEMPLATE_BUILD_TESTS` to
-`OFF` when configuring the project.
-
-You can disable building examples by setting CMake option `BEMAN_CPPTEMPLATE_BUILD_EXAMPLES` to
-`OFF` when configuring the project.
-
-### Supported Platforms
-
-| Compiler   | Version | C++ Standards | Standard Library  |
-|------------|---------|---------------|-------------------|
-| GCC        | 16-13   | C++26-C++17   | libstdc++         |
-| GCC        | 12-11   | C++23-C++17   | libstdc++         |
-| Clang      | 22-19   | C++26-C++17   | libstdc++, libc++ |
-| Clang      | 18      | C++26-C++17   | libc++            |
-| Clang      | 18      | C++23-C++17   | libstdc++         |
-| Clang      | 17      | C++26-C++17   | libc++            |
-| Clang      | 17      | C++20, C++17  | libstdc++         |
-| AppleClang | latest  | C++26-C++17   | libc++            |
-| MSVC       | latest  | C++23         | MSVC STL          |
-
-## Development
-
-See the [Contributing Guidelines](CONTRIBUTING.md).
-
-## Integrate beman.CppTemplate into your project
-
-### Build
-
-You can build CppTemplate using a CMake workflow preset:
+### Build and Test
 
 ```bash
 cmake --workflow --preset gcc-release
 ```
 
-To list available workflow presets, you can invoke:
+List available workflow presets:
 
 ```bash
 cmake --list-presets=workflow
 ```
 
-For details on building beman.CppTemplate without using a CMake preset, refer to the
-[Contributing Guidelines](CONTRIBUTING.md).
-
-### Installation
-
-#### Vcpkg
-
-The preferred way to install CppTemplate is via vcpkg. To do so, after installing vcpkg
-itself, you need to add support for the Beman project's [vcpkg
-registry](https://github.com/bemanproject/vcpkg-registry) by configuring a
-`vcpkg-configuration.json` file (which CppTemplate [provides](vcpkg-configuration.json)).
-
-Then, simply run `vcpkg install beman-CppTemplate`.
-
-#### Manual
-
-To install beman.CppTemplate globally after building with the `gcc-release` preset, you can
-run:
+### Manual Configure
 
 ```bash
-sudo cmake --install build/gcc-release
+cmake -B build -S . \
+  -DCMAKE_CXX_STANDARD=20 \
+  -DCMAKE_TOOLCHAIN_FILE="$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake" \
+  -DVCPKG_MANIFEST_MODE=ON
+cmake --build build
+ctest --test-dir build
 ```
 
-Alternatively, to install to a prefix, for example `/opt/beman`, you can run:
+Disable tests or examples when configuring:
 
 ```bash
-sudo cmake --install build/gcc-release --prefix /opt/beman
+cmake -B build -S . -DCPPTEMPLATE_BUILD_TESTS=OFF -DCPPTEMPLATE_BUILD_EXAMPLES=OFF
 ```
 
-This will generate the following directory structure:
+## Project Layout
 
-```txt
-/opt/beman
-├── include
-│   └── beman
-│       └── CppTemplate
-│           ├── CppTemplate.hpp
-│           └── ...
-└── lib
-    └── cmake
-        └── beman.CppTemplate
-            ├── beman.CppTemplate-config-version.cmake
-            ├── beman.CppTemplate-config.cmake
-            └── beman.CppTemplate-targets.cmake
+```text
+.
+├── cmake/              # Toolchain files and package config
+├── examples/           # Example programs
+├── include/cpptemplate # Public headers
+├── tests/              # Unit tests
+├── CMakeLists.txt
+├── CMakePresets.json
+└── vcpkg.json
 ```
 
-### CMake Configuration
+## Usage
 
-If you installed beman.CppTemplate to a prefix, you can specify that prefix to your CMake
-project using `CMAKE_PREFIX_PATH`; for example, `-DCMAKE_PREFIX_PATH=/opt/beman`.
+Include the umbrella header in your project:
 
-You need to bring in the `beman.CppTemplate` package to define the `beman::CppTemplate` CMake
-target:
+```cpp
+#include <cpptemplate/cpptemplate.hpp>
+
+int main() {
+    return cpptemplate::version_major;
+}
+```
+
+Link against the CMake target when using this as a dependency:
 
 ```cmake
-find_package(beman.CppTemplate REQUIRED)
+find_package(CppTemplate REQUIRED)
+target_link_libraries(your_target PRIVATE CppTemplate::CppTemplate)
 ```
 
-You will then need to add `beman::CppTemplate` to the link libraries of any libraries or
-executables that include `beman.CppTemplate` headers.
+## Customizing the Template
 
-```cmake
-target_link_libraries(yourlib PUBLIC beman::CppTemplate)
-```
+1. Rename the `cpptemplate` namespace and `include/cpptemplate/` directory to your project name.
+2. Update `project(CppTemplate ...)` and target names in `CMakeLists.txt`.
+3. Replace the example utilities in `include/cpptemplate/` with your own code.
+4. Update badge URLs in this README to point at your repository.
 
-### Using beman.CppTemplate
+## License
 
-To use `beman.CppTemplate` in your C++ project,
-include an appropriate `beman.CppTemplate` header from your source code.
-
-```c++
-#include <beman/CppTemplate/CppTemplate.hpp>
-```
+Licensed under the Apache License v2.0 with LLVM Exceptions. See [LICENSE](LICENSE).

@@ -1,94 +1,82 @@
 # SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-cmake_minimum_required(VERSION 3.30...4.4)
-
-include(infra/cmake/enable-experimental-import-std.cmake)
+cmake_minimum_required(VERSION 3.20)
 
 project(
-    beman.CppTemplate
-    DESCRIPTION "Generic Cpp Template"
+    CppTemplate
+    DESCRIPTION "A generic C++ project template"
     LANGUAGES CXX
     VERSION 0.1.0
 )
 
-# [CMAKE.SKIP_TESTS]
 option(
-    BEMAN_CPPTEMPLATE_BUILD_TESTS
-    "Enable building tests and test infrastructure. Default: ${PROJECT_IS_TOP_LEVEL}. Values: { ON, OFF }."
+    CPPTEMPLATE_BUILD_TESTS
+    "Build unit tests"
+    ${PROJECT_IS_TOP_LEVEL}
+)
+option(
+    CPPTEMPLATE_BUILD_EXAMPLES
+    "Build example programs"
     ${PROJECT_IS_TOP_LEVEL}
 )
 
-# [CMAKE.SKIP_EXAMPLES]
-option(
-    BEMAN_CPPTEMPLATE_BUILD_EXAMPLES
-    "Enable building examples. Default: ${PROJECT_IS_TOP_LEVEL}. Values: { ON, OFF }."
-    ${PROJECT_IS_TOP_LEVEL}
+add_library(CppTemplate INTERFACE)
+add_library(CppTemplate::CppTemplate ALIAS CppTemplate)
+
+target_include_directories(
+    CppTemplate
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 
-option(
-    BEMAN_CPPTEMPLATE_USE_MODULES
-    "Provide beman.CppTemplate as a C++ module"
-    OFF
+target_compile_features(CppTemplate INTERFACE cxx_std_20)
+
+include(GNUInstallDirs)
+
+install(
+    TARGETS CppTemplate
+    EXPORT CppTemplateTargets
 )
 
-if(BEMAN_CPPTEMPLATE_USE_MODULES)
-    set(CMAKE_CXX_SCAN_FOR_MODULES ON)
-endif()
-
-configure_file(
-    "${PROJECT_SOURCE_DIR}/include/beman/CppTemplate/config_generated.hpp.in"
-    "${PROJECT_BINARY_DIR}/include/beman/CppTemplate/config_generated.hpp"
-    @ONLY
+install(
+    DIRECTORY include/cpptemplate
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-# for find of beman_install_library and configure_build_telemetry
-include(infra/cmake/beman-install-library.cmake)
-include(infra/cmake/BuildTelemetryConfig.cmake)
+install(
+    EXPORT CppTemplateTargets
+    FILE CppTemplateTargets.cmake
+    NAMESPACE CppTemplate::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CppTemplate
+)
 
-if(BEMAN_CPPTEMPLATE_USE_MODULES)
-    add_library(beman.CppTemplate STATIC)
-else()
-    add_library(beman.CppTemplate INTERFACE)
-endif()
-add_library(beman::CppTemplate ALIAS beman.CppTemplate)
+include(CMakePackageConfigHelpers)
 
-if(BEMAN_CPPTEMPLATE_USE_MODULES)
-    target_sources(
-        beman.CppTemplate
-        PUBLIC
-            FILE_SET CXX_MODULES
-            FILE_SET HEADERS
-                BASE_DIRS
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                    "${CMAKE_CURRENT_BINARY_DIR}/include"
-    )
-    set_target_properties(beman.CppTemplate PROPERTIES CXX_MODULE_STD ON)
-    target_compile_features(beman.CppTemplate PUBLIC cxx_std_23)
-else()
-    target_sources(
-        beman.CppTemplate
-        PUBLIC
-            FILE_SET HEADERS
-                BASE_DIRS
-                    "${CMAKE_CURRENT_SOURCE_DIR}/include"
-                    "${CMAKE_CURRENT_BINARY_DIR}/include"
-    )
-    set_target_properties(
-        beman.CppTemplate
-        PROPERTIES VERIFY_INTERFACE_HEADER_SETS ${PROJECT_IS_TOP_LEVEL}
-    )
-endif()
+configure_package_config_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/CppTemplateConfig.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/CppTemplateConfig.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CppTemplate
+)
 
-add_subdirectory(include/beman/CppTemplate)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/CppTemplateConfigVersion.cmake"
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY SameMajorVersion
+)
 
-beman_install_library(beman.CppTemplate TARGETS beman.CppTemplate)
-configure_build_telemetry()
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/CppTemplateConfig.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/CppTemplateConfigVersion.cmake"
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/CppTemplate
+)
 
-if(BEMAN_CPPTEMPLATE_BUILD_TESTS)
+if(CPPTEMPLATE_BUILD_TESTS)
     enable_testing()
-    add_subdirectory(tests/beman/CppTemplate)
+    add_subdirectory(tests)
 endif()
 
-if(BEMAN_CPPTEMPLATE_BUILD_EXAMPLES)
+if(CPPTEMPLATE_BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif()
