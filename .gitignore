@@ -11,6 +11,9 @@
 # ignore vscode settings
 .vscode
 
+# ignore visual studio
+.vs
+
 # ignore vim swap files
 .swp
 
