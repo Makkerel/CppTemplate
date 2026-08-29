@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0 WITH LLVM-exception
 
-#include <cpptemplate/cpptemplate.hpp>
+#include "../include/cpptemplate/cpptemplate.hpp"
 
 #include <iostream>
 

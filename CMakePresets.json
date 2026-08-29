@@ -129,7 +129,8 @@
     {
       "name": "_root-build",
       "hidden": true,
-      "jobs": 0
+      "jobs": 0,
+      "targets": ["all_verify_interface_header_sets", "all"]
     },
     {
       "name": "gcc-debug",
@@ -229,65 +230,65 @@
     {
       "name": "gcc-debug",
       "steps": [
-        {"type": "configure", "name": "gcc-debug"},
-        {"type": "build", "name": "gcc-debug"},
-        {"type": "test", "name": "gcc-debug"}
+        { "type": "configure", "name": "gcc-debug" },
+        { "type": "build", "name": "gcc-debug" },
+        { "type": "test", "name": "gcc-debug" }
       ]
     },
     {
       "name": "gcc-release",
       "steps": [
-        {"type": "configure", "name": "gcc-release"},
-        {"type": "build", "name": "gcc-release"},
-        {"type": "test", "name": "gcc-release"}
+        { "type": "configure", "name": "gcc-release" },
+        { "type": "build", "name": "gcc-release" },
+        { "type": "test", "name": "gcc-release" }
       ]
     },
     {
       "name": "llvm-debug",
       "steps": [
-        {"type": "configure", "name": "llvm-debug"},
-        {"type": "build", "name": "llvm-debug"},
-        {"type": "test", "name": "llvm-debug"}
+        { "type": "configure", "name": "llvm-debug" },
+        { "type": "build", "name": "llvm-debug" },
+        { "type": "test", "name": "llvm-debug" }
       ]
     },
     {
       "name": "llvm-release",
       "steps": [
-        {"type": "configure", "name": "llvm-release"},
-        {"type": "build", "name": "llvm-release"},
-        {"type": "test", "name": "llvm-release"}
+        { "type": "configure", "name": "llvm-release" },
+        { "type": "build", "name": "llvm-release" },
+        { "type": "test", "name": "llvm-release" }
       ]
     },
     {
       "name": "appleclang-debug",
       "steps": [
-        {"type": "configure", "name": "appleclang-debug"},
-        {"type": "build", "name": "appleclang-debug"},
-        {"type": "test", "name": "appleclang-debug"}
+        { "type": "configure", "name": "appleclang-debug" },
+        { "type": "build", "name": "appleclang-debug" },
+        { "type": "test", "name": "appleclang-debug" }
       ]
     },
     {
       "name": "appleclang-release",
       "steps": [
-        {"type": "configure", "name": "appleclang-release"},
-        {"type": "build", "name": "appleclang-release"},
-        {"type": "test", "name": "appleclang-release"}
+        { "type": "configure", "name": "appleclang-release" },
+        { "type": "build", "name": "appleclang-release" },
+        { "type": "test", "name": "appleclang-release" }
       ]
     },
     {
       "name": "msvc-debug",
       "steps": [
-        {"type": "configure", "name": "msvc-debug"},
-        {"type": "build", "name": "msvc-debug"},
-        {"type": "test", "name": "msvc-debug"}
+        { "type": "configure", "name": "msvc-debug" },
+        { "type": "build", "name": "msvc-debug" },
+        { "type": "test", "name": "msvc-debug" }
       ]
     },
     {
       "name": "msvc-release",
       "steps": [
-        {"type": "configure", "name": "msvc-release"},
-        {"type": "build", "name": "msvc-release"},
-        {"type": "test", "name": "msvc-release"}
+        { "type": "configure", "name": "msvc-release" },
+        { "type": "build", "name": "msvc-release" },
+        { "type": "test", "name": "msvc-release" }
       ]
     }
   ]
