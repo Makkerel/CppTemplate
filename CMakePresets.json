@@ -129,7 +129,6 @@
     {
       "name": "_root-build",
       "hidden": true,
-      "jobs": 0,
       "targets": ["all_verify_interface_header_sets", "all"]
     },
     {
